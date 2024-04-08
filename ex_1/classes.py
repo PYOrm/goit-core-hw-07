@@ -18,7 +18,7 @@
 
 from collections import UserDict
 from typing import Any
-from datetime import datetime, date
+import datetime
 
 
 class Field():
@@ -35,19 +35,25 @@ class Name(Field):
 class Phone(Field):
     def __init__(self, phone:str):
         if not self.is_valid(phone):
-           raise ValueError
+           raise ValueError ("Phone format is not valid")
         super().__init__(phone) 
 
     def is_valid(self, phone):
         return len(phone)==10 and str(phone).isdigit()
+    
+    def __len__(self):
+        return len(self.value)
 
 class Birthday(Field):
     def __init__(self, birthday:str):
         try:
-            bday = datetime.strptime(birthday, "DD.MM.YYYY")
+            bday = datetime.datetime.strptime(birthday, "%d.%m.%Y")
             super().__init__(bday)
         except Exception:
             raise ValueError("Invalid date format. Use DD.MM.YYYY")
+    
+    def __str__(self):
+        return datetime.datetime.strftime(self.value, "%d.%m.%Y")
 
         
 class Record():
@@ -72,7 +78,7 @@ class Record():
     
     def edit_phone(self, old_phone, new_phone):                     
         if len(self.find_phone(old_phone))==0:
-            raise ValueError
+            raise ValueError ("Phone not found")
         self.add_phone(new_phone)
         self.remove_phone(old_phone)
 
@@ -99,9 +105,8 @@ class AddressBook(UserDict):
         nearest_birthdays = []                          
         today = datetime.datetime.today().date()        
         for key,val in self.data.items():               
-            if isinstance(val, Record):                   
+            if type(val) == Record:                   
                 birthday = val.birthday.value           
-                #birthday_date = datetime.datetime.strptime(birthday,"%Y.%m.%d").date()  # convert string to datetime and get date
                 birthday_date_in_year = datetime.date.replace(birthday, year=today.year) 
 
                 if 0 > (birthday_date_in_year - today).days:    
@@ -109,6 +114,6 @@ class AddressBook(UserDict):
                     
                 if (birthday_date_in_year - today).days <= 7:   
                     greeting_day = birthday_date_in_year + datetime.timedelta(days=float([0,0,0,0,0,2,1][birthday_date_in_year.weekday()]))  
-                    nearest_birthdays.append({"name":val.name.value, "congratulation_date":datetime.datetime.strftime(greeting_day,"%Y.%m.%d")}) 
+                    nearest_birthdays.append({"name":val.name.value, "congratulation_date":datetime.datetime.strftime(greeting_day,"%d.%m.%Y")}) 
         return nearest_birthdays
     
