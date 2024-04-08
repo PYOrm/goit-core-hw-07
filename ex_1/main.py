@@ -20,12 +20,16 @@ def main():
     @input_error                                            #use decorator
     def add_contact(data:list, book:AddressBook) -> str:                      #define function for add contact
         name, number, _ = data                                 #unpack data
-        recordName = book.find(name)
-        if recordName is None:
-            
-            book.add_record(Record(name))
-            book[name] = number                           #add record to dictionary
-        return "Record added."                              #return confirm 
+        record_name = book.find(name)
+        msg = "Record updated."
+        if record_name is None:
+            record_name = Record(name)
+            record_name.add_phone(number)                           #add record to dictionary
+            msg = "Record added."
+        else:
+            record_name.edit_phone(number)
+        book.add_record(record_name)
+        return msg                              #return confirm 
 
     @input_error                                            #use decorator
     def change_contact(data:list) -> str:                   #define function for change contact
