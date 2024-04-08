@@ -47,13 +47,13 @@ class Phone(Field):
 class Birthday(Field):
     def __init__(self, birthday:str):
         try:
-            bday = datetime.datetime.strptime(birthday, "%d.%m.%Y")
+            bday = datetime.datetime.strptime(birthday, "%d.%m.%Y").date()
             super().__init__(bday)
         except Exception:
             raise ValueError("Invalid date format. Use DD.MM.YYYY")
     
     def __str__(self):
-        return datetime.datetime.strftime(self.value, "%d.%m.%Y")
+        return datetime.date.strftime(self.value, "%d.%m.%Y")
 
         
 class Record():
@@ -103,7 +103,7 @@ class AddressBook(UserDict):
     
     def get_upcoming_birthdays(self) -> list:
         nearest_birthdays = []                          
-        today = datetime.datetime.today().date()        
+        today = datetime.date.today()        
         for key,val in self.data.items():               
             if type(val) == Record:                   
                 birthday = val.birthday.value           

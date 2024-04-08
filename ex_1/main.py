@@ -5,57 +5,57 @@ def main():
 
     phone_book = AddressBook()
 
-    def input_error(func:Callable):                         #define decorator
-        def inner(*args,**kwargs):                          #inner function wich catch exceprions
-            try:                                            #try execute decorated function
-                return func(*args,**kwargs)                 #return result of execution
+    def input_error(func:Callable):                         
+        def inner(*args,**kwargs):                          
+            try:                                            
+                return func(*args,**kwargs)                 
             except KeyError:                                
                 return "Invalid command"
             except ValueError as err:
                 return err.args[0]
             except IndexError:
                 return "Contact not exist" 
-        return inner                                        #return inner function
+        return inner                                        
 
-    @input_error                                            #use decorator
-    def add_contact(data:list) -> str:                      #define function for add contact
-        name, number = data                                 #unpack data
+    @input_error                                            
+    def add_contact(data:list) -> str:                      
+        name, number = data                                 
         record_name = phone_book.find(name)
         msg = "Record updated."
         if record_name is None:
             record_name = Record(name)
-            record_name.add_phone(number)                           #add record to dictionary
+            record_name.add_phone(number)                           
             msg = "Record added."
         else:
             record_name.add_phone(number)
         phone_book.add_record(record_name)
-        return msg                              #return confirm 
+        return msg                             
 
-    @input_error                                            #use decorator
-    def change_contact(data:list) -> str:                   #define function for change contact
-        name, old_number, new_number = data                                 #unpack data
+    @input_error                                            
+    def change_contact(data:list) -> str:                   
+        name, old_number, new_number = data                                 
         record = phone_book.get(name)
-        if not record:                        #if record not exist 
-            raise IndexError()                              #rise exception
+        if not record:                         
+            raise IndexError()                              
         record.edit_phone(old_number, new_number)
-        phone_book[name] = record                           #update dictionary
-        return "Contact updated"                            #return confirm 
+        phone_book[name] = record                           
+        return "Contact updated"                             
 
-    @input_error                                            #use decorator
-    def show_phone(data:list) ->str:                        #define function for show number
-        name, *_ = data                                     #unpack data
-        return str(phone_book[name])                            #try return phone by given name
+    @input_error                                           
+    def show_phone(data:list) ->str:                        
+        name, *_ = data                                     
+        return str(phone_book[name])                        
 
-    def show_all():                                         #define function for show all phone book
+    def show_all():                                         
         res = ""
-        for name, record in phone_book.items():              #each record display
-            res += str(record) + "\n"               #with format 
+        for name, record in phone_book.items():              
+            res += str(record) + "\n"                         
         return res.removesuffix("\n")
 
-    @input_error                                            #use decorator
-    def parse_input(user_input:str) -> list:                #define function to parse command
-        user_input = user_input.lower().strip().split()     #split input string by " "
-        return (user_input.pop(0), user_input)              #return command and left data
+    @input_error                                            
+    def parse_input(user_input:str) -> list:                
+        user_input = user_input.lower().strip().split()     
+        return (user_input.pop(0), user_input)              
 
     @input_error
     def add_birthday(args) -> str:
@@ -74,10 +74,10 @@ def main():
     @input_error
     def birthdays():
         return phone_book.get_upcoming_birthdays()
-                                                 #define main function
+
     print("Welcome to the assistant bot!")              #greeting
     while True:                                         #start unlimit cycle
-        get_command, data = parse_input(input("Enter a command: ")) #parse data from user
+        get_command, data = parse_input(input("Enter a command: ")) 
         match get_command:                              #select action for entered command
             case ("exit"|"close"):                      #terminate cycle 
                 print("Good bye!")
