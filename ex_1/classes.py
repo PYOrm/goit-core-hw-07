@@ -86,7 +86,7 @@ class Record():
         self.birthday = Birthday(birthday)
 
     def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.items)}"
+        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.items)}, birthday:{self.birthday}"
 
 class AddressBook(UserDict):
     def __init__(self):
@@ -117,3 +117,9 @@ class AddressBook(UserDict):
                     nearest_birthdays.append({"name":val.name.value, "congratulation_date":datetime.datetime.strftime(greeting_day,"%d.%m.%Y")}) 
         return nearest_birthdays
     
+    def __str__(self):
+        res = ""
+        for name, record in self.items():              
+            res += str(record) + "\n"                        
+        return res.removesuffix("\n")
+        
